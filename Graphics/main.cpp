@@ -13,16 +13,17 @@
 #include "CompareNodes.h"
 #include "Pacman.h"
 #include "Ghost.h"
+#include "GameOver.h"
 
 const int SCREEN_WIDTH = 800;
 const int SCREEN_HEIGHT = 800;
 
 int maze[HEIGHT][WIDTH] = {0};
-Pacman* p = new Pacman(14, 7);
+Pacman* p = new Pacman(MSZ/2, MSZ/2);
 vector<Ghost*> ghosts = {   
-							new Ghost(3, HEIGHT - 2, GHOST_RED),
-							new Ghost(1, HEIGHT - 2, GHOST_GREEN),
-							new Ghost(1, HEIGHT - 4, GHOST_BLUE),
+							new Ghost(generateRandomInt(0, WIDTH-2), generateRandomInt(0,HEIGHT-2), GHOST_RED),
+							new Ghost(generateRandomInt(0, WIDTH-2), generateRandomInt(0,HEIGHT-2), GHOST_GREEN),
+							new Ghost(generateRandomInt(0, WIDTH-2), generateRandomInt(0,HEIGHT-2), GHOST_BLUE),
 						};
 
 bool isAS = false;
@@ -30,6 +31,45 @@ bool setGridlines = false;
 bool flag = false;
 
 void SetupMaze() {
+		int i, j;
+	// outer margins
+	for (i = 0;i < MSZ;i++) {
+		maze[0][i] = WALL; // first line
+		maze[MSZ-1][i] = WALL; // last line
+		maze[i][0] = WALL; // left column
+		maze[i][MSZ-1] = WALL; // left column
+	}
+
+	// inner space
+	for(i=1;i<MSZ-1;i++)
+		for (j = 1;j < MSZ-1;j++) {
+			if (i % 2 == 1) // mostly spaces
+			{
+				if (rand() % 10 > 2) // 80%
+					maze[i][j] = SPACE;
+				else if (rand() % 10 >= 6) 
+					maze[i][j] = COIN;
+				else
+					maze[i][j] = WALL;
+			} else // mostly walls
+			{
+				if (rand() % 10 >= 5) // 70%
+					maze[i][j] = WALL;
+				else if (rand() % 10 >= 6) 
+					maze[i][j] = COIN;
+				else
+					maze[i][j] = SPACE;
+
+			}
+		}
+	maze[p->getRow()][p->getCol()] = PACMAN;
+	
+    for (auto& g: ghosts) {
+		maze[g->getRow()][g->getCol()] = g->getColor();
+    }
+}
+
+void setupClassicMaze() {
 	int i, j;
 	for (i = 0; i < HEIGHT; i++)
 		for (j = 0; j < WIDTH; j++)
@@ -241,6 +281,7 @@ void SetupMaze() {
     for (auto& g: ghosts) {
 		maze[g->getRow()][g->getCol()] = g->getColor();
     }
+
 }
 
 double Distance(double x1, double y1, double x2, double y2) {
@@ -250,7 +291,8 @@ double Distance(double x1, double y1, double x2, double y2) {
 void init()
 {
 	glClearColor(0.7, 0.7, 0.7, 0);// color of window background
-	glOrtho(0, WIDTH, 0, HEIGHT, -1, 1); // set the coordinates system
+	//glOrtho(0, WIDTH, 0, HEIGHT, -1, 1); // set the coordinates system
+	glOrtho(0, MSZ, 0, MSZ, -1, 1); // set the coordinates system
 
 	srand(time(0));
 
@@ -259,12 +301,10 @@ void init()
 
 void ShowMaze() {
 	int i, j;
-	for(i=0;i<HEIGHT;i++)
-		for (j = 0;j < WIDTH;j++)
-		{
+	for(i=0;i<MSZ;i++)
+		for (j = 0;j < MSZ;j++) {
 			//1. set color of cell
-			switch (maze[i][j])
-			{
+			switch (maze[i][j]) {
 			case SPACE:
 				glColor3d(1, 1, 1); // white
 				break;
@@ -320,76 +360,6 @@ void ShowMaze() {
 		}
 }
 
-//void RestorePath(Cell* pc)
-//{
-//	while (pc != nullptr)
-//	{
-//		maze[pc->getRow()][pc->getCol()] = PATH;
-//		pc = pc->getParent();
-//	}
-//}
-//
-//bool CheckNeighbor(int row, int col, Cell* pCurrent, bool isBFS, int target)
-//{
-//	if (maze[row][col] == target)
-//	{
-//		if(isBFS)
-//			runBFS = false;
-//		else
-//			runDFS = false;
-//		cout << "The solution has been found. \n";
-//		printf("The g: %d", pCurrent->getG());
-//		RestorePath(pCurrent);
-//		return false;
-//	}
-//	else // maze[row][col] must be SPACE (WHITE)
-//	{
-//		Cell* pc = new Cell(row, col, pCurrent);
-//		maze[row][col] = GRAY;
-//		if (isBFS) grays.push(pc);
-//		else dfs_grays.push_back(pc);
-//		return true;
-//	}
-//}
-//
-//void RunBFSIteration(int target) 
-//{
-//	Cell* pCurrent;
-//	int row, col;
-//	bool go_on = true;
-//
-//	if (grays.empty())
-//	{
-//		runBFS = false;
-//		cout << "There is no solution. Grays is empty\n";
-//		return;
-//	}
-//	else // grays is not empty
-//	{
-//		pCurrent = grays.top();
-//		grays.pop(); // extract the first element from grays
-//		// 1. paint pCurrent black
-//		row = pCurrent->getRow();
-//		col = pCurrent->getCol();
-//		if (maze[row][col] != START)
-//			maze[row][col] = BLACK;
-//		// 2. check all the neighbors of pCurrent
-//		// go up
-//		if (maze[row + 1][col] == SPACE || maze[row + 1][col] == target)
-//			go_on = CheckNeighbor(row + 1, col, pCurrent,true, target);
-//		// down
-//		if(go_on && (maze[row - 1][col] == SPACE || maze[row - 1][col] == target))
-//			go_on = CheckNeighbor(row - 1, col, pCurrent,true, target);
-//		// left
-//		if (go_on && (maze[row ][col- 1] == SPACE || maze[row ][col- 1] == target))
-//			go_on = CheckNeighbor(row , col- 1, pCurrent, true, target);
-//		// right
-//		if (go_on && (maze[row][col +1] == SPACE || maze[row][col + 1] == target))
-//			go_on = CheckNeighbor(row, col + 1, pCurrent, true, target);
-//		
-//	}
-//}
-
 // note: pq is passed by reference
 void UpdateG(Node* pNeighbor, priority_queue<Node*, vector<Node*>, CompareNodes> &pq)
 {
@@ -408,6 +378,15 @@ void UpdateG(Node* pNeighbor, priority_queue<Node*, vector<Node*>, CompareNodes>
 		pq.push(tmp.back());
 		tmp.pop_back();
 	}
+}
+
+void displayClassic()
+{
+	glClear(GL_COLOR_BUFFER_BIT); // clean frame buffer
+
+	ShowMaze();
+
+	glutSwapBuffers(); // show all
 }
 
 void display()
@@ -449,6 +428,8 @@ void updatePacmanPos() {
 	maze[c->getRow()][c->getCol()] = PACMAN;
 	p->setRow(c->getRow());
 	p->setCol(c->getCol());
+
+
 	if (p->getRow() == 16 && p->getCol() == WIDTH - 1) { 
 		p->setCol(1);
 		maze[c->getRow()][c->getCol()] = SPACE;
@@ -463,14 +444,21 @@ void updatePacmanPos() {
 
 void idle() {
 	if (flag) {
-		updatePacmanPos();
-		if (rand() % 2 == 0)
+		try {
 			updatePacmanPos();
-		for (auto& g : ghosts) {
-			updateGhostPos(g);
+			for (auto& g : ghosts) {
+				updateGhostPos(g);
+			}
+			if (rand() % 10 > 8)
+				updatePacmanPos();
+			for(auto g: ghosts)
+				if (g->getRow() == p->getRow() && g->getCol() == p->getCol()) throw GameOver("");
+		} catch (GameOver e) {
+			printf("%s", e.what());
+			flag = false;
 		}
 	}
-	Sleep(150);
+	Sleep(100);
 	glutPostRedisplay(); // indirect call to display
 }
 
@@ -491,19 +479,47 @@ void menu(int choice)
 	}
 }
 
-void main(int argc, char* argv[]) 
-{
+void keyboard(unsigned char key, int x, int y) {
+	if (key == ' ')
+		if (flag) flag = false;
+		else flag = true;
+	if (key == 'g')
+		if (setGridlines) setGridlines = false;
+		else setGridlines = true;
+	if (key == 'c') 
+		SetupMaze();
+	if (key == 'q')
+		exit(0);
+	if (key == 's') {
+		setupClassicMaze();
+		flag = true;
+	}
+	if (key == 'r') {
+		p = new Pacman(MSZ/2, MSZ/2);
+		ghosts ={   
+				new Ghost(generateRandomInt(0, WIDTH-2), generateRandomInt(0,HEIGHT-2), GHOST_RED),
+				new Ghost(generateRandomInt(0, WIDTH-2), generateRandomInt(0,HEIGHT-2), GHOST_GREEN),
+				new Ghost(generateRandomInt(0, WIDTH-2), generateRandomInt(0,HEIGHT-2), GHOST_BLUE),
+				};
+		SetupMaze();
+		flag = false;
+	}
+}
+
+void main(int argc, char* argv[]) {
 	glutInit(&argc, argv);
 	// definitions for visual memory (Frame buffer) and double buffer
 	glutInitDisplayMode(GLUT_RGB | GLUT_DOUBLE);
 	glutInitWindowSize(SCREEN_WIDTH, SCREEN_HEIGHT);
-	glutInitWindowPosition(600, 0);
+	glutInitWindowPosition(800, 0);
 	glutCreateWindow("BFS - DFS");
 
 	// display is a refresh function
 	glutDisplayFunc(display);
 	// idle is a update function
 	glutIdleFunc(idle);
+
+	glutKeyboardFunc(keyboard);
 
 	// add menu
 	glutCreateMenu(menu);

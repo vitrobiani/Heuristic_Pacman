@@ -4,6 +4,9 @@
 #include <queue>
 #include <vector>
 #include <iostream>
+#include <unordered_set>  
+
+
 
 class PacmanCompareCells {
 private:
@@ -39,8 +42,8 @@ public:
 	void cloneMaze(int source[HEIGHT][WIDTH], int target[HEIGHT][WIDTH]) { for (int i = 0; i < HEIGHT; i++) { for (int j = 0; j < WIDTH; j++) { target[i][j] = source[i][j]; } } }
 
     Cell* runBFS(int maze[HEIGHT][WIDTH], int curRow, int curCol);
-    Cell* BFSIteration(queue<Cell*>& grays, int maze[HEIGHT][WIDTH], vector<int> targets);
-    Cell* PacmanCheckNeighbor(int row, int col, Cell* pCurrent, vector<int> targets, int maze[HEIGHT][WIDTH], queue<Cell*>& grays);
+    Cell* BFSIteration(queue<Cell*>& grays, int maze[HEIGHT][WIDTH], vector<int> targets, bool forH);
+    Cell* PacmanCheckNeighbor(int row, int col, Cell * pCurrent, vector<int> targets, int maze[HEIGHT][WIDTH], queue<Cell*>&grays, bool forH);
     Cell* PacmanRestorePath(Cell* pc);
 
     //Cell* BFSIteration(std::queue<std::unique_ptr<Cell>>& grays, int maze[HEIGHT][WIDTH], const vector<int>& targets);

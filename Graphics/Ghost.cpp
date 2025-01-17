@@ -58,7 +58,6 @@ Cell* Ghost::ASIteration(std::priority_queue<Cell*, std::vector<Cell*>, GhostCom
 
 Cell* Ghost::GhostCheckNeighbor(int row, int col, Cell* pCurrent, int target, int maze[HEIGHT][WIDTH], std::priority_queue<Cell*, std::vector<Cell*>, GhostCompareCells>& grays) {
     if (maze[row][col] == target) {
-        //std::cout << "The solution has been found.\n";
         return GhostRestorePath(pCurrent);
     }
 

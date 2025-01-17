@@ -25,11 +25,14 @@ const int DOWN = 1;
 const int LEFT = 2;
 const int RIGHT = 3;
 const int IS_FREE = -1;
-const int BFS_DEPTH = 40;
+const int BFS_DEPTH = 250;
 
 const double MAX_G = 10000;
-const int WIDTH = 28;
-const int HEIGHT = 31;
+const int MSZ = 75;
+const int WIDTH = MSZ;
+const int HEIGHT = MSZ;
+//const int WIDTH = 28;
+//const int HEIGHT = 31;
 
 
 inline int generateRandomInt(int min, int max) {

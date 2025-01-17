@@ -15,9 +15,7 @@ class GameOver: public exception {
 		{
 		}
 
-		// Override the what() method to return our message
-		const char* what() const throw()
-		{
+		const char* what() const throw() {
 			return message.c_str();
 		}
 	};
