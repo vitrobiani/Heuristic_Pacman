@@ -4,7 +4,6 @@
 Pacman::Pacman(int c, int r) {
 	row = r;
 	col = c;
-	g = 0;
 }
 
 bool Pacman::isTarget(const vector<int>& v, int t) {
@@ -26,9 +25,6 @@ Cell* Pacman::runBFS(int maze[HEIGHT][WIDTH], int curRow, int curCol) {
     vector<Cell*> ghostCells;
 
     Cell* to_go_to = nullptr;
-
-    if (curRow == 11 && curCol == 18) {
-    }
 
     int i = 0;
     while (i < BFS_DEPTH) {
@@ -62,18 +58,7 @@ Cell* Pacman::runBFS(int maze[HEIGHT][WIDTH], int curRow, int curCol) {
 			return minhs.at(rand() % minhs.size());
         }
 
-        double min = MAX_G;
-        double h1 = (maze[curRow + 1][curCol] == WALL) ? MAX_G : Distance(curRow + 1, curCol, to_go_to->getRow(), to_go_to->getCol());
-        min = (h1 < min) ? h1 : min;
-        double h2 = (maze[curRow - 1][curCol] == WALL) ? MAX_G : Distance(curRow - 1, curCol, to_go_to->getRow(), to_go_to->getCol());
-        min = (h2 < min) ? h2 : min;
-        double h3 = (maze[curRow][curCol + 1] == WALL) ? MAX_G : Distance(curRow, curCol + 1, to_go_to->getRow(), to_go_to->getCol());
-        min = (h3 < min) ? h3 : min;
-        double h4 = (maze[curRow][curCol - 1] == WALL) ? MAX_G : Distance(curRow, curCol - 1, to_go_to->getRow(), to_go_to->getCol());
-        min = (h4 < min) ? h4 : min;
-		vector<Cell*> minhs;
 		return PacmanRestorePath(to_go_to);
-
     }
     else {
 		queue<Cell*> grays2;
@@ -103,27 +88,6 @@ Cell* Pacman::runBFS(int maze[HEIGHT][WIDTH], int curRow, int curCol) {
 			}
 		}
 		return PacmanRestorePath(to_go_to);
-        double min = MAX_G;
-        double h1 = (maze[curRow + 1][curCol] == WALL) ? MAX_G : Distance(curRow + 1, curCol, to_go_to->getRow(), to_go_to->getCol());
-        min = (h1 < min) ? h1 : min;
-        double h2 = (maze[curRow - 1][curCol] == WALL) ? MAX_G : Distance(curRow - 1, curCol, to_go_to->getRow(), to_go_to->getCol());
-        min = (h2 < min) ? h2 : min;
-        double h3 = (maze[curRow][curCol + 1] == WALL) ? MAX_G : Distance(curRow, curCol + 1, to_go_to->getRow(), to_go_to->getCol());
-        min = (h3 < min) ? h3 : min;
-        double h4 = (maze[curRow][curCol - 1] == WALL) ? MAX_G : Distance(curRow, curCol - 1, to_go_to->getRow(), to_go_to->getCol());
-        min = (h4 < min) ? h4 : min;
-		vector<Cell*> minhs;
-
-        if (min == h1) 
-            minhs.push_back(new Cell(curRow + 1, curCol, nullptr));
-        if (min == h2) 
-            minhs.push_back(new Cell(curRow - 1, curCol, nullptr));
-        if (min == h3) 
-            minhs.push_back(new Cell(curRow, curCol + 1, nullptr));
-        if (min == h4) 
-            minhs.push_back(new Cell(curRow, curCol - 1, nullptr));
-
-		return minhs.at(rand() % minhs.size());
     }
     return to_go_to;
 }
@@ -151,15 +115,9 @@ Cell* Pacman::BFSIteration(queue<Cell*>& grays, int maze[HEIGHT][WIDTH], vector<
     if ((!go_on || forH) && (maze[row - 1][col] == SPACE || maze[row - 1][col] == COIN || isTarget(targets, maze[row - 1][col])))
         go_on = PacmanCheckNeighbor(row - 1, col, pCurrent, targets, maze, grays, forH);
     if ((!go_on || forH) && (maze[row][col - 1] == SPACE || maze[row][col - 1] == COIN || isTarget(targets, maze[row][col - 1])))
-		if(row == 16 && col - 1 == 2)
-			go_on = PacmanCheckNeighbor(row, WIDTH-2, pCurrent, targets, maze, grays, forH);
-        else
-			go_on = PacmanCheckNeighbor(row, col - 1, pCurrent, targets, maze, grays, forH);
+		go_on = PacmanCheckNeighbor(row, col - 1, pCurrent, targets, maze, grays, forH);
     if ((!go_on || forH) && (maze[row][col + 1] == SPACE || maze[row][col + 1] == COIN || isTarget(targets, maze[row][col + 1])))
-		if(row == 16 && col + 1 == WIDTH-2)
-			go_on = PacmanCheckNeighbor(row, 2, pCurrent, targets, maze, grays, forH);
-        else
-			go_on = PacmanCheckNeighbor(row, col + 1, pCurrent, targets, maze, grays, forH);
+		go_on = PacmanCheckNeighbor(row, col + 1, pCurrent, targets, maze, grays, forH);
 
 
     return go_on;

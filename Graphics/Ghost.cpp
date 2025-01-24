@@ -4,7 +4,6 @@ Ghost::Ghost(int c, int r, int clr) {
     row = r;
     col = c;
     color = clr;
-    g = 0;
     prev_state = COIN;
 }
 

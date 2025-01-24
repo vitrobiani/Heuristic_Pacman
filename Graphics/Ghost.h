@@ -7,7 +7,7 @@
 
 class GhostCompareCells {
 private:
-    int targetRow, targetCol; // Target position for comparison
+    int targetRow, targetCol;
 public:
     GhostCompareCells(int tRow, int tCol) : targetRow(tRow), targetCol(tCol) {}
 
@@ -20,7 +20,7 @@ public:
 
 class Ghost {
 private:
-    int row, col, g;
+    int row, col;
     int color;
     int prev_state;
 
@@ -33,7 +33,6 @@ public:
     void setPrev(int state) { prev_state = state; }
     void setRow(int r) { row = r; }
     void setCol(int c) { col = c; }
-    int getG() { return g; }
 	bool isGhost(int t) { return t == GHOST_RED || t == GHOST_GREEN || t == GHOST_BLUE; }
 
     Cell* runAS(int maze[HEIGHT][WIDTH], int targetRow, int targetCol);

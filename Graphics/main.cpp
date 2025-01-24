@@ -26,7 +26,6 @@ vector<Ghost*> ghosts = {
 							new Ghost(generateRandomInt(0, WIDTH-2), generateRandomInt(0,HEIGHT-2), GHOST_BLUE),
 						};
 int score = 0;
-bool isAS = false;
 bool setGridlines = false;
 bool flag = false;
 
@@ -429,18 +428,6 @@ void updatePacmanPos() {
 	maze[c->getRow()][c->getCol()] = PACMAN;
 	p->setRow(c->getRow());
 	p->setCol(c->getCol());
-
-
-	if (p->getRow() == 16 && p->getCol() == WIDTH - 1) { 
-		p->setCol(1);
-		maze[c->getRow()][c->getCol()] = SPACE;
-		maze[p->getRow()][p->getCol()] = PACMAN;
-	}
-	if (p->getRow() == 16 && p->getCol() == 0) { 
-		p->setCol(WIDTH-2);
-		maze[c->getRow()][c->getCol()] = SPACE;
-		maze[p->getRow()][p->getCol()] = PACMAN;
-	}
 }
 
 void idle() {
@@ -460,7 +447,7 @@ void idle() {
 			flag = false;
 		}
 	}
-	Sleep(100);
+	Sleep(75);
 	glutPostRedisplay(); // indirect call to display
 }
 
@@ -515,7 +502,7 @@ void main(int argc, char* argv[]) {
 	glutInitDisplayMode(GLUT_RGB | GLUT_DOUBLE);
 	glutInitWindowSize(SCREEN_WIDTH, SCREEN_HEIGHT);
 	glutInitWindowPosition(800, 0);
-	glutCreateWindow("BFS - DFS");
+	glutCreateWindow("Pacman");
 
 	// display is a refresh function
 	glutDisplayFunc(display);
