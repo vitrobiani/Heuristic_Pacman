@@ -25,7 +25,7 @@ vector<Ghost*> ghosts = {
 							new Ghost(generateRandomInt(0, WIDTH-2), generateRandomInt(0,HEIGHT-2), GHOST_GREEN),
 							new Ghost(generateRandomInt(0, WIDTH-2), generateRandomInt(0,HEIGHT-2), GHOST_BLUE),
 						};
-
+int score = 0;
 bool isAS = false;
 bool setGridlines = false;
 bool flag = false;
@@ -425,6 +425,7 @@ void updatePacmanPos() {
 	maze[p->getRow()][p->getCol()] = SPACE;
 	Cell* c = p->runBFS(clonedMaze, p->getRow(), p->getCol());
 
+	if (maze[c->getRow()][c->getCol()] == COIN) { score++; };
 	maze[c->getRow()][c->getCol()] = PACMAN;
 	p->setRow(c->getRow());
 	p->setCol(c->getCol());
@@ -449,12 +450,13 @@ void idle() {
 			for (auto& g : ghosts) {
 				updateGhostPos(g);
 			}
-			if (rand() % 10 > 8)
-				updatePacmanPos();
+			//if (rand() % 10 > 8)
+			//	updatePacmanPos();
 			for(auto g: ghosts)
 				if (g->getRow() == p->getRow() && g->getCol() == p->getCol()) throw GameOver("");
 		} catch (GameOver e) {
-			printf("%s", e.what());
+			printf("%s\n", e.what());
+			printf("score %d\n", score);
 			flag = false;
 		}
 	}
@@ -502,6 +504,7 @@ void keyboard(unsigned char key, int x, int y) {
 				new Ghost(generateRandomInt(0, WIDTH-2), generateRandomInt(0,HEIGHT-2), GHOST_BLUE),
 				};
 		SetupMaze();
+		score = 0;
 		flag = false;
 	}
 }

@@ -19,8 +19,8 @@ Cell* Ghost::runAS(int maze[HEIGHT][WIDTH], int targetRow, int targetCol) {
 			to_go_to = ASIteration(grays, maze, targetRow, targetCol);
 		}
     } catch (GameOver& e) {
-        printf("Game over!");
-        return to_go_to;
+        printf("Ghost is blocked");
+        throw e;
     }
     return to_go_to;
 }
